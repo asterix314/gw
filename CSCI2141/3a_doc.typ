@@ -1,18 +1,15 @@
 #import "@preview/sleek-university-assignment:0.1.0": assignment
 
-#show: assignment.with(
-  title: "Part 3a: Describing the Database",
-  authors: (
-    (
-      name: "John Doe",
-      email: "john.doe@example.com",
-      student-no: "123/XXX",
-    ),
-  ),
-  course: "CSC2141: Designing and Building Your Database",
+#set page(background: rotate(24deg,
+  text(50pt, fill: luma(85%))[
+    // *CONFIDENTIAL*
+  ]
+))
 
-  // NOTE: Optionally specify this for a university logo on the first page.
-  // university-logo: image(./images/uni-logo.svg),
+#show: assignment.with(
+  title: [Part 3a: Describing the Database],
+  course: [CSCI 2141: Introduction to Database Systems],
+  university-logo: image("dalhousie.svg", width: 2cm),
 )
 
 #show heading.where(level: 1): it => {
@@ -28,15 +25,27 @@
 
 The dataset for this project is designed to simulate an e-commerce platform, capturing essential information related to users, products, orders, reviews, and payments. The data is primarily generated for the purpose of this assignment to demonstrate the design and implementation of a relational database system. 
 
-_Source of the Data_: The data used in this dataset is a combination of publicly available e-commerce datasets and simulated data generated using Python scripts and ChatGPT prompts to ensure a realistic and comprehensive dataset. The publicly available data is sourced from Kaggle E-commerce Dataset, which contains transactional data from an online grocery store. The license information for this dataset is available under the Kaggle License.
+_Source of the Data_: The data used in this dataset is a combination of publicly available e-commerce datasets and simulated data generated using LLM prompts to ensure a realistic and comprehensive dataset. The publicly available data is sourced from Kaggle E-commerce Dataset, which contains transactional data from an online grocery store. The license information for this dataset is available under the Kaggle License. 
 
-https://www.geeksforgeeks.org/how-to-design-a-relational-database-for-e-commerce-website/
+URL to download the e-commerce transaction log data: 
+- https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store/data
 
 
-_Past Usage of the Data_:The Kaggle dataset has been widely used in the data science community for various purposes, including market basket analysis, customer segmentation, and predictive modeling. Researchers and data scientists have leveraged this dataset to understand customer buying patterns and optimize inventory management. For example, a study by John Doe et al. used this dataset to predict customer churn rates.
+_Past Usage of the Data_: The Kaggle dataset has been widely used in the data science community for various purposes, including market basket analysis, customer segmentation, and predictive modeling. Researchers and data scientists have leveraged this dataset to understand customer buying patterns and optimize inventory management.
 
-_Data Generation_:To enhance the dataset, we generated additional data using Python scripts and ChatGPT prompts. For instance, user profiles were created with realistic names, addresses, and contact information using ChatGPT. The script used for generating user data is as follows:
+_Data Generation_: The publicly available dataset was too big (5.2G), so some filtering was applied, and the result was put to a CSV file (prodocts.csv) for loading to the `product` table.
 
+  + Only select the "purchase" event type 
+  + Randomly sample a few hundred products, with names, categories, and prices
+
+To enhance the dataset, I generated additional data using DeepSeek. For instance, user profiles were created with realistic names, addresses. The prompt used was:
+
+#quote(block: true)[
+  ```
+  Given the table schema listed below for an e-commerce system, please generate test data for each table. note that
+    1. the data for the product table is fully specified below, so do not generate for product table.
+    2. pay attention to the cross references between the tables and the data generated must reflect those.
+  ```]
 
 The dataset will be used to answer key questions related to e-commerce operations, such as:
 
@@ -55,7 +64,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `user`
 - columns: 7
-- rows: a few hundred or more
+- rows: 12
 
 #let table-schema = table.with(
   columns: (auto, 1fr, auto),
@@ -78,7 +87,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `product`
 - columns: 6
-- rows: a dozen or so
+- rows: 463
 
 #table-schema(
   [`product_id`], [Unique product identifier], [Primary Key],
@@ -93,7 +102,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `category`
 - columns: 2
-- rows: \~ 10
+- rows: 13
 
 #table-schema(
   [`category_id`], [Unique category identifier], [Primary Key],
@@ -104,7 +113,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `order`
 - columns: 5
-- rows: > 1000
+- rows: 12
 
 #table-schema(
   [`order_id`], [Unique order identifier], [Primary Key],
@@ -118,7 +127,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `order_detail`
 - columns: 5
-- rows: > 1000
+- rows: 15
 
 #table-schema(
   [`order_detail_id`], [Unique identifier], [Primary Key],
@@ -132,7 +141,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `review`
 - columns: 6
-- rows: a few hundred or more
+- rows: 12
 
 #table-schema(
   [`review_id`], [Unique review identifier], [Primary Key],
@@ -147,7 +156,7 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - name: `payment`
 - columns: 5
-- rows: > 1000
+- rows: 15
 
 #table-schema(
   [`payment_id`], [Unique payment identifier], [Primary Key],

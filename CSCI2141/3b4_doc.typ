@@ -1,15 +1,16 @@
 #import "@preview/sleek-university-assignment:0.1.0": assignment
 
+#set page(background: rotate(24deg,
+  text(50pt, fill: luma(85%))[
+//    *CONFIDENTIAL*
+  ]
+))
+
+
 #show: assignment.with(
-  title: "Part 3b: Describing the Database",
-  authors: (
-    (
-      name: "John Doe",
-      email: "john.doe@example.com",
-      student-no: "123/XXX",
-    ),
-  ),
-  course: "CSC2141: Designing and Building Your Database",
+  title: [Part 3b: Advanced Queries and Procedures],
+  course: [CSCI 2141: Introduction to Database Systems],
+  university-logo: image("dalhousie.svg", width: 2cm)
 )
 
 #show heading.where(level: 1): it => {
@@ -19,20 +20,6 @@
 #set text(font: "Times New Roman", size: 12pt)
 #set heading(numbering: "1.")
 #set figure(numbering: none)
-
-/*
-Write documentation for your database. This should
-consist of the following:
-
-- A brief summary of the database: data source, license information, number of tables, number of attributes.
-
-- Document at least three business rules that are enforced by your database. Explain how these rules are expressed as table constraints.
-
-- Briefly explain the queries in the 3b3_queries.sql file. What is their purpose?
-
-- Explain how to use the stored procedures in the 3b2_stored_precedures.sql file. The reader should be able to understand enough to know what information needs to be provided in the CALL(), what the procedure does, and what (if any) information is returned by OUT or INOUT variables.
-
-*/
 
 = Summary of the Database
 

@@ -1,6 +1,6 @@
-DELIMITER //
-
+DELIMITER $$
 -- Procedure to place a new order and update product stock
+DROP PROCEDURE IF EXISTS place_order $$
 CREATE PROCEDURE place_order(
     IN p_user_id INT,
     IN p_product_id INT,
@@ -44,9 +44,10 @@ BEGIN
         ROLLBACK;
         SET p_order_id = -1;
     END IF;
-END //
+END $$
 
 -- Procedure to process payment and update order status
+DROP PROCEDURE IF EXISTS process_payment $$
 CREATE PROCEDURE process_payment(
     IN p_order_id INT,
     IN p_payment_method VARCHAR(20),
@@ -75,13 +76,7 @@ BEGIN
     SET p_success = TRUE;
 
     COMMIT;
-
-    EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        SET p_success = FALSE;
-END //
-
+END $$
 DELIMITER ;
 
 -- Call examples

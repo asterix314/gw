@@ -44,6 +44,7 @@ FROM (
 JOIN user u ON spending.user_id = u.user_id;
 
 -- Query 5: Create and manipulate view
+drop view if exists product_performance;
 CREATE VIEW product_performance AS
 SELECT
     p.product_id,
