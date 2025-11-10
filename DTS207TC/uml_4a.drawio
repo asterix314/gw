@@ -1,0 +1,93 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
+  <diagram name="第 1 页" id="9qQvCgWz2hcXsT2jiU5c">
+    <mxGraphModel dx="986" dy="681" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TDtBIFXksp_hhndEih66-1" value="Student" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="30" width="200" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-2" value="+ studentNumber: String {key}&#xa;+ ssn: String {key}&#xa;+ lastName: String&#xa;+ firstName: String&#xa;+ currentAddress: String&#xa;+ currentPhone: String&#xa;+ permanentAddress: String&#xa;+ permanentCity: String&#xa;+ permanentState: String&#xa;+ permanentZIP: String&#xa;+ permanentPhone: String&#xa;+ birthDate: Date&#xa;+ sex: String&#xa;+ class: String&#xa;+ degreeProgram: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="TDtBIFXksp_hhndEih66-1">
+          <mxGeometry y="30" width="200" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-3" value="Department" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="390" y="210" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-4" value="+ name: String {key}&#xa;+ code: String {key}&#xa;+ officeNumber: String&#xa;+ officePhone: String&#xa;+ college: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="TDtBIFXksp_hhndEih66-3">
+          <mxGeometry y="30" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-5" value="Course" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="460" y="30" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-6" value="+ courseNumber: String {key}&#xa;+ name: String&#xa;+ description: String&#xa;+ semesterHours: Integer&#xa;+ level: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="TDtBIFXksp_hhndEih66-5">
+          <mxGeometry y="30" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-7" value="Section" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="390" y="360" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-8" value="+ sectionNumber: Integer&#xa;+ semester: String&#xa;+ year: Integer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="TDtBIFXksp_hhndEih66-7">
+          <mxGeometry y="30" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-11" value="major&#xa;1..1" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=-0.003;entryY=0.19;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-2" target="TDtBIFXksp_hhndEih66-4">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="270" as="sourcePoint" />
+            <mxPoint x="370" y="410" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="360" y="180" />
+              <mxPoint x="360" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-12" value="minor&#xa;0..1" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-2" target="TDtBIFXksp_hhndEih66-4">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="270" as="sourcePoint" />
+            <mxPoint x="460" y="170" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="340" y="240" />
+              <mxPoint x="340" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-13" value="offeredBy&#xa;1..1" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=0;exitX=0.5;exitY=1;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-5" target="TDtBIFXksp_hhndEih66-3">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="590" as="sourcePoint" />
+            <mxPoint x="460" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-14" value="sectionOf&#xa;1..1" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.753;entryY=1.033;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-7" target="TDtBIFXksp_hhndEih66-6">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="520" y="590" as="sourcePoint" />
+            <mxPoint x="320" y="590" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="611" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-15" value="enrolls&#xa;*" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.1;entryY=0.004;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-1" target="TDtBIFXksp_hhndEih66-9">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="220" y="430" as="sourcePoint" />
+            <mxPoint x="320" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-16" value="has&#xa;*" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-7" target="TDtBIFXksp_hhndEih66-9">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="520" y="640" as="sourcePoint" />
+            <mxPoint x="420" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-17" value="" style="endArrow=open;endSize=8;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=0;exitX=0.75;exitY=1;" edge="1" parent="1" source="TDtBIFXksp_hhndEih66-1" target="TDtBIFXksp_hhndEih66-9">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="180" y="340" as="sourcePoint" />
+            <mxPoint x="780" y="50" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-9" value="Transcript" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="370" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="TDtBIFXksp_hhndEih66-10" value="+ grade: String&#xa;+ creditsEarned: Integer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="TDtBIFXksp_hhndEih66-9">
+          <mxGeometry y="30" width="200" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

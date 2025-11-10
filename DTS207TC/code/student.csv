@@ -1,0 +1,11 @@
+student_id,name,gender,major,gpa
+1,Alice,F,Computer Science,3.5
+2,Bob,M,Mathematics,3.8
+3,Charlie,M,Physics,3.2
+4,Diana,F,Computer Science,3.9
+5,Ethan,M,Mathematics,3.6
+6,Fiona,F,Physics,3.7
+7,George,M,Computer Science,3.4
+8,Hannah,F,Mathematics,3.3
+9,Ian,M,Physics,3.1
+10,Julia,F,Computer Science,3.0
