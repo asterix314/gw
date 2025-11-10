@@ -1,6 +1,8 @@
 #import "@preview/sleek-university-assignment:0.1.0": assignment
 
-#set page(background: rotate(24deg,
+#set page(
+  paper: "a4",
+  background: rotate(24deg,
   text(50pt, fill: luma(85%))[
     // *CONFIDENTIAL*
   ]
@@ -57,7 +59,6 @@ The dataset will be used to answer key questions related to e-commerce operation
 
 - How effective are different payment methods in terms of transaction success rates?
 
-#pagebreak()
 = Description of Tables
 
 == Users Table
@@ -166,7 +167,6 @@ The dataset will be used to answer key questions related to e-commerce operation
   [`amount`], [Amount paid], []
 )
 
-#pagebreak()
 = Internal Schema and Normalization
 
 The schema diagram below was generated using #link("https://dbeaver.io/")[DBeaver]'s ERD tool. Tables are displayed with name, attributes and data types (as icons). Primary keys are in *boldface*, and foreign keys highlighted in #text("green", fill: green). The dotted lines show dependencies, with the foreign keys of the left table depending on the right table. (The tool does not support drawing explicit arrows, but one can assume all arrows are pointing to the left which is the dependent side)

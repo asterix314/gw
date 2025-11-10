@@ -1,16 +1,17 @@
 #import "@preview/sleek-university-assignment:0.1.0": assignment
 
-#set page(background: rotate(24deg,
-  text(50pt, fill: luma(85%))[
-//    *CONFIDENTIAL*
-  ]
-))
+#set page(
+  paper: "a4",
+  // background: rotate(24deg, text(50pt, fill: luma(85%))[
+  //   *CONFIDENTIAL*
+  // ]),
+)
 
 
 #show: assignment.with(
   title: [Part 3b: Advanced Queries and Procedures],
   course: [CSCI 2141: Introduction to Database Systems],
-  university-logo: image("dalhousie.svg", width: 2cm)
+  university-logo: image("dalhousie.svg", width: 2cm),
 )
 
 #show heading.where(level: 1): it => {
