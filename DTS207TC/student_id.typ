@@ -1,36 +1,11 @@
-#import "@preview/sleek-university-assignment:0.1.0": assignment
-#import "@preview/zebraw:0.6.0": *
-
-#set page(
-  paper: "a4",
-//  background: rotate(24deg, text(100pt, fill: luma(85%), font: "Microsoft YaHei")[*SAMPLE\ 样例*]),
-)
+#import "/assignment.typ": assignment, sol
 
 #show: assignment.with(
   title: [Assessment Task 1 (CW)],
   course: [DTS207TC: Database Development and Design],
   university-logo: image("logo.png", width: 6cm),
+  figure-numbering: "1",
 )
-
-#set text(font: "Times New Roman", size: 11pt)
-
-#show heading.where(level: 1): it => {
-  block(below: 1em)[#it]
-}
-
-#set heading(numbering: "1.")
-
-
-#let sol(content) = {
-  set text(
-    font: "STIX Two Text", 
-    style: "italic",
-    fill: luma(50%))
-  show: zebraw
-  show raw: set text(font: "Fira Code")
-
-  text(font: "Noto Emoji")[✏️ ] + content
-}
 
 = Intermediate SQL
 
