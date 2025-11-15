@@ -1,27 +1,13 @@
-#import "@preview/sleek-university-assignment:0.1.0": assignment
-
-#set page(
-  paper: "a4",
-  background: rotate(24deg,
-  text(50pt, fill: luma(85%))[
-    // *CONFIDENTIAL*
-  ]
-))
+#import "/assignment.typ": assignment, sol
 
 #show: assignment.with(
   title: [Part 3a: Describing the Database],
   course: [CSCI 2141: Introduction to Database Systems],
-  university-logo: image("dalhousie.svg", width: 2cm),
+  university-logo: image("dalhousie.svg", width: 3cm),
+  heading-numbering: "1.",
+  text-size: 12pt,
+  watermark: true
 )
-
-#show heading.where(level: 1): it => {
-  block(below: 1em)[#it]
-}
-
-#set text(font: "Times New Roman", size: 12pt)
-#set heading(numbering: "1.")
-#set figure(numbering: none)
-
 
 = Overview of Dataset
 
@@ -29,9 +15,7 @@ The dataset for this project is designed to simulate an e-commerce platform, cap
 
 _Source of the Data_: The data used in this dataset is a combination of publicly available e-commerce datasets and simulated data generated using LLM prompts to ensure a realistic and comprehensive dataset. The publicly available data is sourced from Kaggle E-commerce Dataset, which contains transactional data from an online grocery store. The license information for this dataset is available under the Kaggle License. 
 
-URL to download the e-commerce transaction log data: 
-- https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store/data
-
+#link("https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store/data", underline[URL to download the e-commerce transaction log data])
 
 _Past Usage of the Data_: The Kaggle dataset has been widely used in the data science community for various purposes, including market basket analysis, customer segmentation, and predictive modeling. Researchers and data scientists have leveraged this dataset to understand customer buying patterns and optimize inventory management.
 
@@ -43,20 +27,16 @@ _Data Generation_: The publicly available dataset was too big (5.2G), so some fi
 To enhance the dataset, I generated additional data using DeepSeek. For instance, user profiles were created with realistic names, addresses. The prompt used was:
 
 #quote(block: true)[
-  ```
-  Given the table schema listed below for an e-commerce system, please generate test data for each table. note that
-    1. the data for the product table is fully specified below, so do not generate for product table.
-    2. pay attention to the cross references between the tables and the data generated must reflect those.
-  ```]
+Given the table schema listed below for an e-commerce system, please generate test data for each table. note that
+
+1. the data for the product table is fully specified below, so do not generate for product table.
+2. pay attention to the cross references between the tables and the data generated must reflect those.]
 
 The dataset will be used to answer key questions related to e-commerce operations, such as:
 
 - What are the most popular products among users?
-
 - How do customer reviews impact product sales?
-
 - What is the average order value for different user segments?
-
 - How effective are different payment methods in terms of transaction success rates?
 
 = Description of Tables
@@ -179,7 +159,6 @@ The schema diagram below was generated using #link("https://dbeaver.io/")[DBeave
 All 7 tables are mostly in 3NF because:
 
 - They are in 2NF (no partial dependencies).
-
 - They have no transitive dependencies (non-key attributes depend only on the PK).
 
 Nevertheless, there are some small denormalizations. But these are intentional for performance or historical tracking.

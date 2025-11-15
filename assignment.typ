@@ -7,8 +7,9 @@
   university-logo: none,
   course: none,
   figure-numbering: none,
-  heading-numbering: "1",
+  heading-numbering: "1.",
   watermark: false,
+  text-size: 11pt,
   body,
 ) = {
   set page(
@@ -34,8 +35,8 @@
         font: "Microsoft YaHei"))},
   )
 
-  set text(11pt, 
-    font: ("STIX Two Text", "DengXian"), 
+  set text(text-size, 
+    font: ("STIX Two Text", "DengXian"),
     weight:"medium"
   )
   show math.equation: set text(
@@ -94,12 +95,12 @@
 
 #let sol(content) = {
   set text(font: "Fira Sans", style: "italic", weight: "light")
-  set table.hline(stroke: .5pt)
-  set table.vline(stroke: .5pt)
   show math.equation: set text(font: "Fira Math", fill: luma(40%))
   show raw: set text(
     font: ("Fira Code Retina", "LXGW WenKai Mono"),
     fill: luma(30%))
+  set table.hline(stroke: .5pt)
+  set table.vline(stroke: .5pt)
 
   text(font: "Noto Emoji", [✏️]) + h(6pt) + content + h(1fr) + $qed$
 }

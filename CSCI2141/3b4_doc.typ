@@ -1,26 +1,15 @@
-#import "@preview/sleek-university-assignment:0.1.0": assignment
-
-#set page(
-  paper: "a4",
-  // background: rotate(24deg, text(50pt, fill: luma(85%))[
-  //   *CONFIDENTIAL*
-  // ]),
-)
+#import "/assignment.typ": assignment, sol
 
 
 #show: assignment.with(
   title: [Part 3b: Advanced Queries and Procedures],
   course: [CSCI 2141: Introduction to Database Systems],
-  university-logo: image("dalhousie.svg", width: 2cm),
+  university-logo: image("dalhousie.svg", width: 3cm),
+  heading-numbering: "1.",
+  watermark: true,
+  text-size: 12pt
 )
 
-#show heading.where(level: 1): it => {
-  block(below: 1em)[#it]
-}
-
-#set text(font: "Times New Roman", size: 12pt)
-#set heading(numbering: "1.")
-#set figure(numbering: none)
 
 = Summary of the Database
 
@@ -28,11 +17,11 @@ The e-commerce database is designed to manage the operations of an online store.
 
 = Business Rules
 
-+ Each user must have a unique email address. This is enforced by a UNIQUE constraint on the `email` attribute in the `user` table.
++ Each user must have a unique email address. This is enforced by a `UNIQUE` constraint on the `email` attribute in the `user` table.
 
-+ Products must belong to a category. This is enforced by a FOREIGN KEY constraint on the `category_id` attribute in the `product` table, referencing the `category` table.
++ Products must belong to a category. This is enforced by a `FOREIGN KEY` constraint on the `category_id` attribute in the `product` table, referencing the `category` table.
 
-+ Orders must have a status of either 'Pending', 'Completed', or 'Cancelled'. This is enforced by an ENUM constraint on the `status` attribute in the `order` table.
++ Orders must have a status of either `'Pending'`, `'Completed'`, or `'Cancelled'`. This is enforced by an ENUM constraint on the `status` attribute in the `order` table.
 
 = Explanation of Queries
 
@@ -50,4 +39,4 @@ The e-commerce database is designed to manage the operations of an online store.
 
 + `place_order`: This procedure is used to place a new order and update the stock quantity of the product ordered. It requires the user ID, product ID, and quantity as input parameters. The procedure returns the order ID through an OUT parameter. If the stock is insufficient, the transaction is rolled back, and the order ID is set to -1.
 
-+ `process_payment`: This procedure processes a payment for an order and updates the order status to 'Completed'. It requires the order ID and payment method as input parameters. The procedure returns a success status through an OUT parameter. If any error occurs, the transaction is rolled back, and the success status is set to FALSE.
++ `process_payment`: This procedure processes a payment for an order and updates the order status to `'Completed'`. It requires the order ID and payment method as input parameters. The procedure returns a success status through an `OUT` parameter. If any error occurs, the transaction is rolled back, and the success status is set to `FALSE`.
