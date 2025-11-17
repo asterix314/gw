@@ -342,11 +342,108 @@ P1, P2, P3, P1, P4, P1, P5, P3, P6, P2, P3, P4, P6, P2, P5
 
 #sol[The sketch below illustrates all 3 policies side by side. The "queue" is a priority queue implementing the policy, where the number at the left corresponds to the next buffer to be replaced.
 
-  #figure(
-    image("simulation.png"),
-    caption: [Simulation sketch of replacement policies LRU, MRU, and FIFO under the given query sequence.\
-      #text(orange)[■] cache miss and replace #h(2em) #text(green)[■]  cache hit.],
-  )]
+#{  
+  let lru(q, p, bq) = {
+    let i = bq.position(it => it.p == p)
+    if i != none {  // hit
+      bq.at(i) += (q: q, hit: true)
+      bq.push(bq.remove(i))
+    } else {    // miss and replace
+      bq.at(0) += (q: q, p: p, hit: false)
+      bq.push(bq.remove(0))
+    }
+    return bq
+  }
+
+  let mru(q, p, bq) = {
+    let i = bq.position(it => it.p == p)
+    if i != none {  // hit
+      bq.at(i) += (q: q, hit: true)
+      bq.insert(0, bq.remove(i))
+    } else {    // miss and replace
+      bq.at(0) += (q: q, p: p, hit: false)
+      bq.insert(0, bq.remove(0))
+    }
+    return bq
+  }
+
+  let fifo(q, p, bq) = {
+    let i = bq.position(it => it.p == p)
+    if i != none {  // hit
+      bq.at(i) += (q: q, hit: true)
+    } else {    // miss and replace
+      bq.at(0) += (q: q, p: p, hit: false)
+      bq.push(bq.remove(0))
+    }
+    return bq
+  }
+
+  let query(q, p, bq, policy) = {
+    // query q requests page p on buffer queue bq
+    for i in range(bq.len()) {  // clear hit
+      bq.at(i).hit = none
+    }
+
+    let i = bq.position(it => it.p == none)
+    if i != none {  // has empty buffer
+      bq.at(i) += (q: q, p: p, hit: false)
+    } else {
+      bq = policy(q, p, bq)
+    }
+    return bq
+  }
+
+  let policy_rows(policy, size: 3, pages: none) = {
+    let bq = for i in range(size) {
+      ((i: i, q: none, p: none, hit: none),)
+    }
+
+    let to_cell(b) = {  // convert buffer to table.cell
+      table.cell(
+        fill: if b.hit != none {
+          if b.hit {green.transparentize(40%)} 
+          else {orange.transparentize(40%)}},
+        if b.p != none {[P#b.p Q#b.q]} else {[]}
+      )
+    }
+
+    let entries = for (q, p) in pages.enumerate(start: 1) {
+      bq = query(q, p, bq, policy)
+      ([#q], [#p])
+      bq.sorted(key: it => it.i).map(to_cell)
+      (text(fill: luma(50%), bq.map(it =>str(it.i + 1)).join()),)
+    }
+
+    return entries.chunks(size + 3)
+  }
+
+  let table_entries(pages) = {
+    let rows = policy_rows.with(pages: pages)
+    rows(lru).zip(
+      rows(mru).map(it => it.slice(2)),
+      rows(fifo).map(it => it.slice(2)),
+    ).flatten()
+  }
+
+  let pages = (1, 2, 3, 1, 4, 1, 5, 3, 6, 2, 3, 4, 6, 2, 5)
+  figure(
+    table(
+      columns: 14,
+      stroke: (x, y) => if x not in (0, 1, 5, 9, 13) and y > 1 {0.5pt},
+      [], [],
+      table.cell(colspan: 4, [*LRU*]),
+      table.cell(colspan: 4, [*MRU*]),
+      table.cell(colspan: 4, [*FIFO*]),
+      [*q*], [*p*],
+      ..3 * ([*buf_1*], [*buf_2*], [*buf_3*], [*Q*],),
+      ..table_entries(pages)
+    ),
+    caption: [Simulation sketch of replacement policies LRU, MRU, and FIFO under the given query sequence.
+    *q* = query, *p* = page, *Q* = buffer queue, 
+    #text(orange.transparentize(40%))[■] = cache miss,
+    #text(green.transparentize(40%))[■] = cache hit.],
+  )
+}]
 
 4. Among LRU, MRU and FIFO policies, which one performs better in the given query? Why?
 
