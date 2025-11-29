@@ -8,6 +8,8 @@
   course: none,
   figure-numbering: none,
   heading-numbering: "1.",
+  enum-numbering: "1)",
+  raw-numbering: true,
   watermark: false,
   text-size: 11pt,
   body,
@@ -44,12 +46,13 @@
     weight: "medium")
 
   set list(indent: 8pt)
-  set enum(numbering: "1)")
+  set enum(numbering: enum-numbering)
 
   set heading(numbering: heading-numbering)
   show heading: set block(below: 10pt)
 
   show raw: zebraw.with(
+    numbering: raw-numbering,
     background-color: silver.transparentize(80%),
     highlight-color: silver.transparentize(20%),
   )

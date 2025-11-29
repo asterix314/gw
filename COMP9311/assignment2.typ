@@ -340,7 +340,7 @@ P1, P2, P3, P1, P4, P1, P5, P3, P6, P2, P3, P4, P6, P2, P5
 
 3. Sketch  the  process  of  how  blocks  are  replaced  in  the  First  In  First  Out (FIFO)  policy.
 
-#sol[The sketch below illustrates all 3 policies side by side. The "queue" is a priority queue implementing the policy, where the number at the left corresponds to the next buffer to be replaced.
+#sol[The sketch below illustrates all 3 policies side by side. The "buffer queue" is a priority queue implementing the policy, where the number at the left corresponds to the next buffer to be replaced.
 
 #{  
   let lru(q, p, bq) = {
@@ -449,9 +449,9 @@ P1, P2, P3, P1, P4, P1, P5, P3, P6, P2, P3, P4, P6, P2, P5
 
 #sol[Let's calculate the hit rate $r$ of the policies by counting green cells:
   $
-    r_"LRU" & = 5\/15 approx 0.33 \
+    r_"LRU" & = 3\/15 approx 0.2 \
     r_"MRU" & = 5\/15 approx 0.33 \
     r_"FIFO" & = 4\/15 approx 0.27
   $
 
-So for the given sequence of queries, LRU and MRU perform equally well. FIFO performs worse.]
+So for the given sequence of queries, the performance of the policies are MRU > FIFO > LRU.]
