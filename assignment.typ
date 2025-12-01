@@ -51,8 +51,9 @@
   set heading(numbering: heading-numbering)
   show heading: set block(below: 10pt)
 
-  show raw: zebraw.with(
+  show: zebraw.with(
     numbering: raw-numbering,
+    numbering-separator: true,
     background-color: silver.transparentize(80%),
     highlight-color: silver.transparentize(20%),
   )

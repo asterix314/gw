@@ -42,11 +42,11 @@ class FifoPolicy:
 class CustomPolicy:
     def __init__(self, size):
         self.size = size
-        self.cache = [27,2,53,3,49] # most frequently accessed
+        self.cache = [27,2,53,3,49][:size] # most frequently accessed
         self.name = 'custom'
 
     def access(self, current):
-        return current in self.cache[:self.size]
+        return current in self.cache
 
 def run_test(trace, pol):
     hit = []
