@@ -1,0 +1,506 @@
+1.2 Create Schema
+
+-- 1.2.1 Create dimension tables
+CREATE TABLE dim_date (
+    date_key        DATE PRIMARY KEY,        -- Surrogate or natural key for date
+    year            INT,
+    quarter         TEXT,                    -- e.g. 'Q1', 'Q2', ...
+    month_num       INT,
+    month_name      TEXT
+);
+
+CREATE TABLE dim_product (
+    product_key     SERIAL PRIMARY KEY,
+    product_name    TEXT,
+    category        TEXT,
+    subcategory     TEXT
+);
+
+CREATE TABLE dim_region (
+    region_key      SERIAL PRIMARY KEY,
+    region_name     TEXT,            -- e.g. 'North America'
+    country         TEXT,            -- e.g. 'USA'
+    city            TEXT             -- e.g. 'New York'
+);
+
+-- 1.2.2 Create fact table
+CREATE TABLE fact_sales (
+    sales_id        SERIAL PRIMARY KEY,
+    date_key        DATE        REFERENCES dim_date(date_key),
+    product_key     INT         REFERENCES dim_product(product_key),
+    region_key      INT         REFERENCES dim_region(region_key),
+    quantity_sold   INT,
+    sales_amount    NUMERIC(12,2)
+);
+
+
+1.3 Insert Sample Data
+
+
+-- 1.3.1 dim_date rows
+INSERT INTO dim_date (date_key, year, quarter, month_num, month_name) VALUES
+('2025-01-05', 2025, 'Q1', 1, 'January'),
+('2025-01-12', 2025, 'Q1', 1, 'January'),
+('2025-02-03', 2025, 'Q1', 2, 'February'),
+('2025-02-18', 2025, 'Q1', 2, 'February'),
+('2025-03-07', 2025, 'Q1', 3, 'March'),
+('2025-03-21', 2025, 'Q1', 3, 'March');
+
+-- 1.3.2 dim_product rows
+INSERT INTO dim_product (product_name, category, subcategory) VALUES
+('Alpha Phone',     'Electronics', 'Mobile'),
+('Beta Phone',      'Electronics', 'Mobile'),
+('Gamma Laptop',    'Electronics', 'Computer'),
+('Delta Headphones','Accessories', 'Audio');
+
+-- 1.3.3 dim_region rows
+INSERT INTO dim_region (region_name, country, city) VALUES
+('North America', 'USA', 'New York'),
+('North America', 'USA', 'San Francisco'),
+('Asia Pacific',  'Singapore', 'Singapore'),
+('Europe',        'Germany', 'Berlin');
+
+-- 1.3.4 fact_sales rows
+-- We'll mix products, regions, and dates
+INSERT INTO fact_sales (date_key, product_key, region_key, quantity_sold, sales_amount)
+VALUES
+('2025-01-05', 1, 1, 10, 8000.00),
+('2025-01-05', 2, 1,  6, 4200.00),
+('2025-01-12', 1, 2,  4, 3200.00),
+('2025-01-12', 3, 2,  2, 3000.00),
+('2025-02-03', 3, 3,  5, 9500.00),
+('2025-02-03', 4, 3, 15, 2250.00),
+('2025-02-18', 1, 3,  8, 6400.00),
+('2025-02-18', 2, 4, 12, 8400.00),
+('2025-03-07', 3, 4,  3, 5700.00),
+('2025-03-07', 4, 4, 20, 3000.00),
+('2025-03-21', 2, 1, 11, 7700.00),
+('2025-03-21', 4, 2, 25, 3750.00);
+
+
+1.4 Basic Check Query
+
+SELECT
+    fs.sales_id,
+    d.month_name,
+    d.quarter,
+    p.product_name,
+    p.category,
+    r.region_name,
+    r.country,
+    r.city,
+    fs.quantity_sold,
+    fs.sales_amount
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+ORDER BY fs.sales_id;
+
+
+1.6 Reference Answers
+
+-- A1.1
+SELECT p.category,
+       SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_product p ON fs.product_key = p.product_key
+GROUP BY p.category;
+
+-- A1.2
+SELECT r.country,
+       r.city,
+       SUM(fs.quantity_sold) AS total_quantity
+FROM fact_sales fs
+JOIN dim_region r ON fs.region_key = r.region_key
+GROUP BY r.country, r.city
+ORDER BY r.country, r.city;
+
+2.2 SLICE Examples
+SELECT
+    d.date_key,
+    d.month_name,
+    p.product_name,
+    r.region_name,
+    fs.quantity_sold,
+    fs.sales_amount
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+WHERE d.year = 2025
+  AND d.month_name = 'February'   -- slice on Time dimension
+ORDER BY fs.sales_id;
+
+
+SELECT
+    r.region_name,
+    r.country,
+    r.city,
+    p.product_name,
+    fs.quantity_sold,
+    fs.sales_amount
+FROM fact_sales fs
+JOIN dim_region  r ON fs.region_key  = r.region_key
+JOIN dim_product p ON fs.product_key = p.product_key
+WHERE r.region_name = 'Asia Pacific';  -- slice by Region dimension
+
+2.3 
+
+SELECT
+    d.quarter,
+    d.month_name,
+    r.region_name,
+    p.category,
+    fs.quantity_sold,
+    fs.sales_amount
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+WHERE d.year = 2025
+  AND d.quarter = 'Q1'                      -- time range subset
+  AND r.region_name IN ('North America','Asia Pacific'); -- region subset
+
+
+SELECT
+    d.month_name,
+    p.category,
+    SUM(fs.sales_amount) AS total_sales
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+WHERE p.category = 'Electronics'
+  AND d.year = 2025
+  AND d.month_num BETWEEN 1 AND 2   -- restrict to Jan-Feb
+GROUP BY d.month_name, p.category
+ORDER BY d.month_name;
+
+
+2.5
+
+
+-- A2.1 Slice: Fix region_name = 'Asia Pacific'
+SELECT
+    p.product_name,
+    SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+WHERE r.region_name = 'Asia Pacific'
+GROUP BY p.product_name
+ORDER BY total_sales_amount DESC;
+
+-- A2.2 Dice: restrict multiple dimensions at once
+SELECT
+    r.city,
+    SUM(fs.quantity_sold) AS total_quantity
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+WHERE d.year = 2025
+  AND d.quarter = 'Q1'
+  AND p.category = 'Electronics'
+GROUP BY r.city
+ORDER BY total_quantity DESC;
+
+
+
+3.2 Drill-Down Step-by-Step
+
+
+SELECT
+    d.year,
+    SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_date d ON fs.date_key = d.date_key
+GROUP BY d.year
+ORDER BY d.year;
+
+
+
+
+SELECT
+    d.year,
+    d.quarter,
+    SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_date d ON fs.date_key = d.date_key
+GROUP BY d.year, d.quarter
+ORDER BY d.year, d.quarter;
+
+
+
+SELECT
+    d.year,
+    d.quarter,
+    d.month_name,
+    SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_date d ON fs.date_key = d.date_key
+GROUP BY d.year, d.quarter, d.month_name
+ORDER BY d.year, d.quarter, MIN(d.month_num);
+
+
+
+3.3 Roll-Up with GROUPING SETS / ROLLUP
+
+SELECT
+    d.year,
+    d.quarter,
+    d.month_name,
+    SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_date d ON fs.date_key = d.date_key
+GROUP BY ROLLUP (d.year, d.quarter, d.month_name)
+ORDER BY d.year, d.quarter, d.month_name;
+
+
+3.4 More Drill Examples
+
+SELECT
+    r.region_name,   -- high level
+    r.country,
+    r.city,          -- detailed level
+    SUM(fs.sales_amount) AS total_sales_amount
+FROM fact_sales fs
+JOIN dim_region r ON fs.region_key = r.region_key
+GROUP BY r.region_name, r.country, r.city
+ORDER BY r.region_name, r.country, r.city;
+
+
+SELECT
+    p.category,
+    p.subcategory,
+    p.product_name,
+    SUM(fs.sales_amount) AS total_sales
+FROM fact_sales fs
+JOIN dim_product p ON fs.product_key = p.product_key
+GROUP BY p.category, p.subcategory, p.product_name
+ORDER BY p.category, p.subcategory, p.product_name;
+
+
+3.6 Reference Answers
+
+-- A3.1 Drill-Down: year -> quarter -> product
+SELECT
+    d.year,
+    d.quarter,
+    p.product_name,
+    SUM(fs.quantity_sold) AS total_qty
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+GROUP BY d.year, d.quarter, p.product_name
+ORDER BY d.year, d.quarter, p.product_name;
+
+
+-- A3.2 Roll-Up by region/country/city
+SELECT
+    r.region_name,
+    r.country,
+    r.city,
+    SUM(fs.sales_amount) AS total_sales
+FROM fact_sales fs
+JOIN dim_region r ON fs.region_key = r.region_key
+GROUP BY ROLLUP (r.region_name, r.country, r.city)
+ORDER BY r.region_name, r.country, r.city;
+
+
+4.2 Conditional Aggregation Pivot
+SELECT
+    r.region_name,
+
+    SUM(CASE WHEN p.product_name = 'Alpha Phone'      THEN fs.sales_amount ELSE 0 END) AS alpha_phone_sales,
+    SUM(CASE WHEN p.product_name = 'Beta Phone'       THEN fs.sales_amount ELSE 0 END) AS beta_phone_sales,
+    SUM(CASE WHEN p.product_name = 'Gamma Laptop'     THEN fs.sales_amount ELSE 0 END) AS gamma_laptop_sales,
+    SUM(CASE WHEN p.product_name = 'Delta Headphones' THEN fs.sales_amount ELSE 0 END) AS delta_headphones_sales,
+
+    SUM(fs.sales_amount) AS region_total
+FROM fact_sales fs
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+GROUP BY r.region_name
+ORDER BY r.region_name;
+
+4.3
+SELECT
+    p.category,
+
+    SUM(CASE WHEN d.month_name = 'January'  THEN fs.quantity_sold ELSE 0 END) AS jan_qty,
+    SUM(CASE WHEN d.month_name = 'February' THEN fs.quantity_sold ELSE 0 END) AS feb_qty,
+    SUM(CASE WHEN d.month_name = 'March'    THEN fs.quantity_sold ELSE 0 END) AS mar_qty,
+
+    SUM(fs.quantity_sold) AS q1_total_qty
+FROM fact_sales fs
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_date    d ON fs.date_key    = d.date_key
+WHERE d.year = 2025
+GROUP BY p.category
+ORDER BY p.category;
+
+4.4
+
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+SELECT
+    r.region_name    AS row_name,
+    p.product_name   AS column_name,
+    SUM(fs.sales_amount) AS cell_value
+FROM fact_sales fs
+JOIN dim_region  r ON fs.region_key  = r.region_key
+JOIN dim_product p ON fs.product_key = p.product_key
+GROUP BY r.region_name, p.product_name
+ORDER BY r.region_name, p.product_name;
+
+
+SELECT *
+FROM crosstab(
+    $$SELECT
+          r.region_name    AS row_name,
+          p.product_name   AS column_name,
+          SUM(fs.sales_amount) AS cell_value
+      FROM fact_sales fs
+      JOIN dim_region  r ON fs.region_key  = r.region_key
+      JOIN dim_product p ON fs.product_key = p.product_key
+      GROUP BY r.region_name, p.product_name
+      ORDER BY r.region_name, p.product_name$$,
+
+    $$SELECT DISTINCT product_name
+      FROM dim_product
+      ORDER BY product_name$$
+) AS ct(
+    region_name TEXT,
+    "Alpha Phone" NUMERIC,
+    "Beta Phone" NUMERIC,
+    "Delta Headphones" NUMERIC,
+    "Gamma Laptop" NUMERIC
+);
+
+
+
+
+
+
+4.5 Pivot with Time Across Columns Using
+
+SELECT *
+FROM crosstab(
+    $$SELECT
+          p.category       AS row_name,
+          d.month_name     AS column_name,
+          SUM(fs.quantity_sold)::INT AS cell_value
+      FROM fact_sales fs
+      JOIN dim_product p ON fs.product_key = p.product_key
+      JOIN dim_date    d ON fs.date_key    = d.date_key
+      WHERE d.year = 2025
+      GROUP BY p.category, d.month_name
+      ORDER BY p.category, d.month_name$$,
+
+    $$SELECT month_name
+      FROM (
+          SELECT DISTINCT month_name, month_num
+          FROM dim_date
+          WHERE year = 2025
+          ORDER BY month_num
+      ) AS m$$
+) AS ct(
+    category TEXT,
+    January  INT,
+    February INT,
+    March    INT
+);
+
+
+4.6 Extra Pivot: Pivot Region Across Columns, Month as Rows
+
+
+
+SELECT *
+FROM crosstab(
+    $$SELECT
+          d.month_name    AS row_name,     -- row dimension
+          r.region_name   AS column_name,  -- column dimension
+          SUM(fs.sales_amount) AS cell_value
+      FROM fact_sales fs
+      JOIN dim_date   d ON fs.date_key   = d.date_key
+      JOIN dim_region r ON fs.region_key = r.region_key
+      WHERE d.year = 2025
+      GROUP BY d.month_name, d.month_num, r.region_name
+      ORDER BY d.month_num, r.region_name$$,  -- order by row, then category
+
+    $$SELECT DISTINCT region_name
+      FROM dim_region
+      ORDER BY region_name$$
+) AS ct(
+    month_name TEXT,
+    "Asia Pacific"   NUMERIC,
+    "Europe"         NUMERIC,
+    "North America"  NUMERIC
+);
+
+
+
+4.8 
+
+-- A4.1 Conditional Aggregation Pivot (city x category)
+SELECT
+    r.city,
+    SUM(CASE WHEN p.category = 'Electronics' THEN fs.sales_amount ELSE 0 END) AS electronics_sales,
+    SUM(CASE WHEN p.category = 'Accessories' THEN fs.sales_amount ELSE 0 END) AS accessories_sales,
+    SUM(fs.sales_amount) AS city_total
+FROM fact_sales fs
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+GROUP BY r.city
+ORDER BY r.city;
+
+
+--A4.2
+
+SELECT *
+FROM crosstab(
+    $$SELECT
+          p.product_name       AS row_name,
+          d.quarter            AS column_name,
+          SUM(fs.sales_amount) AS cell_value
+      FROM fact_sales fs
+      JOIN dim_product p ON fs.product_key = p.product_key
+      JOIN dim_date    d ON fs.date_key    = d.date_key
+      GROUP BY p.product_name, d.quarter
+      ORDER BY p.product_name, d.quarter$$,
+
+    $$SELECT q
+      FROM (VALUES ('Q1'),('Q2'),('Q3'),('Q4')) AS t(q)$$
+) AS ct(
+    product_name TEXT,
+    "Q1" NUMERIC,
+    "Q2" NUMERIC,
+    "Q3" NUMERIC,
+    "Q4" NUMERIC
+);
+
+5.2 Step 1: Dice to Q1 2025
+
+-- Filter to Q1 2025 only
+CREATE TEMP VIEW q1_2025_sales AS
+SELECT
+    fs.*,
+    d.year,
+    d.quarter,
+    d.month_num,
+    d.month_name,
+    p.product_name,
+    p.category,
+    r.region_name,
+    r.country,
+    r.city
+FROM fact_sales fs
+JOIN dim_date    d ON fs.date_key    = d.date_key
+JOIN dim_product p ON fs.product_key = p.product_key
+JOIN dim_region  r ON fs.region_key  = r.region_key
+WHERE d.year = 2025
+  AND d.quarter = 'Q1';
+
+

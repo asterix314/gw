@@ -7,8 +7,10 @@
   figure-numbering: none,
   enum-numbering: "(a.i)",
   heading-numbering: none,
-  watermark: true,
+  watermark: false,
 )
+
+#set enum(tight: false)
 
 = Question 6: Storage Management
 
@@ -157,7 +159,6 @@ Consider a hard disk with a sector size of $B$ = 512 bytes. A `CUSTOMER` file co
     If the system repeatedly uses binary search for each individual `Ssn` in the range, performance would suffer because of:
 
     1. Excessive block accesses: each possible `Ssn`  in the range leads to a maximum of 11 block  accesses (all $456 - 123 + 1 = 334$ of them in the   above example).
-
     2. Poor cache utilization: random I/O overhead  from binary search disrupting sequential access  patterns and increasing cache misses.
 
     Those are the 2 explanations of the 30%   performance decrease. A better alternative would  be to only use binary search for the start of the  range, then scan sequentially to collect all   records up to the end of the range.]],
@@ -171,7 +172,6 @@ Consider a hard disk with a sector size of $B$ = 512 bytes. A `CUSTOMER` file co
 
     #set enum(numbering: "1.")
     1. The index file grows in size incurring more  binary lookups on average.
-
     2. Many records are put in overflow blocks and the  `CUSTOMER` file becomes fragmented to the point  that reading from the file can no longer benefit fully from the page buffer.]],
 
   [A multi-level primary index is constructed. During the design review, two proposals are made:
@@ -188,7 +188,7 @@ Consider a hard disk with a sector size of $B$ = 512 bytes. A `CUSTOMER` file co
 
     Therefore, Proposal A needs 2 levels of index. To   retrieve a tuple given its `Ssn`, the number of   block accesses is 2: one for inner index block,   another one for the actual block containing the   record.
 
-    Proposal B allows 10 additional index blocks in   main memory, each filled with index entries   pointing to $256 times 10 = 2560$ of the more   "popular" records. Because 10% of the `Ssn`'s   account for 90% of the queries, these 10 in-memory  blocks would cover about $2560 div 4000 times 90%  = 57.6%$ of the queries. So on average, the number   of block accesses is $57.6% times 1 + 42.4% times   2 = 1.424$.
+    Proposal B allows 10 additional index blocks in   main memory, each filled with index entries pointing to $256 times 10 = 2560$ of the more   "popular" records. Because 10% of the `Ssn`'s   account for 90% of the queries, these 10 in-memory  blocks would cover about $2560 div 4000 times 90%  = 57.6%$ of the queries (or even more as we are selecting the most popular ones). So on average, the number   of block accesses is $57.6% times 1 + 42.4% times 2 = 1.424$.
 
     In conclusion, Proposal B is better as it reduces the query time by about $1-1.424 div 2 approx 30%$, at a cost of only 40K additional memory footage and perhaps slightly more complex in-memory search logic.]],
 
@@ -227,13 +227,13 @@ Consider a database with a relation `Account(AccountID, Balance)` and initial st
     stroke: .5pt,
     align: center,
       table.header[`T1` (Transfer)][`T2` (Report)],
-      [```
+      [```sql
       begin transaction
       update Account set Balance = Balance - 100 where AccountID = 1;
       update Account set Balance = Balance + 100 where AccountID = 2;
       commit;
       ```],
-      [```
+      [```sql
       begin transaction
       select sum(Balance) from Account;
       commit;
@@ -243,9 +243,18 @@ Consider a database with a relation `Account(AccountID, Balance)` and initial st
   The application requirement states that the report must never reflect a financially inconsistent state. However, under certain database configurations, `T2` might output a total of 20 (instead of the correct 120).
 
   #enum(
-    [Explain under which isolation level(s) this inconsistent total of 20 could occur, and describe the exact sequence of operations in a concurrent schedule that leads to this result.],
+    [Explain under which isolation level(s) this inconsistent total of 20 could occur, and describe the exact sequence of operations in a concurrent schedule that leads to this result.
     
-    [The development team proposes using the `SERIALIZABLE` isolation level to fix this issue. Critically evaluate this proposal by discussing one key advantage and two potential drawbacks (considering both performance and system complexity) for this specific application scenario.],
+    #sol[
+      The inconsistent total of 20 can only occur under the `READ UNCOMMITTED` isolation level. `T2` can only read committed data under all other isolation levels, so not possible to see a balance of 20.
+      
+      Specifically, under `READ UNCOMMITTED`, `T2` reads `Balance` after `T1` has executed the first `update` (decrement by 100), but before the second `update` (increment by 100). ]],
+    
+    [The development team proposes using the `SERIALIZABLE` isolation level to fix this issue. Critically evaluate this proposal by discussing one key advantage and two potential drawbacks (considering both performance and system complexity) for this specific application scenario.
+    
+    #sol[
+      - Advantage: guarantees freedom from the observed anomaly.
+      - Potential drawback: reduced performance due to waiting.]],
   )],
 
   [Now consider these transactions: a process adding a new account (`T3`), and an audit process calculating the total balance (`T4`).
@@ -254,15 +263,15 @@ Consider a database with a relation `Account(AccountID, Balance)` and initial st
     columns: (1fr, 1fr),
     stroke: .5pt,
     align: center,
-    table.header[`T1` (Transfer)][`T4` (Report)],
-    [```
+    table.header[`T3` (New Account)][`T4` (Audit)],
+    [```sql
     begin transaction
-    update Account set Balance = Balance - 100where AccountID = 1;
-    update Account set Balance = Balance + 100where AccountID = 2;
+    insert into Account values (3, 150);
     commit;
     ```],
-    [```
+    [```sql
     begin transaction
+    select sum(Balance) from Account;
     select sum(Balance) from Account;
     commit;
     ```],
@@ -270,16 +279,36 @@ Consider a database with a relation `Account(AccountID, Balance)` and initial st
 
   Suppose the application requirement for the audit is that it must have a consistent view of the database throughout its execution.
 
-  + Is it possible for the two SUM queries in `T4` to return different values? Analyz this possibility under at least three different isolation levels, providing a brief concurrent schedule for each case where the results differ.
+  #enum(
+    [Is it possible for the two SUM queries in `T4` to return different values? Analyz this possibility under at least three different isolation levels, providing a brief concurrent schedule for each case where the results differ.
+    
+    #sol[
+      - `SERIALIZABLE`: not possible.
+      - `REPEATABLE READ`: not possible.
+      - `READ COMMITTED`: possible when `T4`'s first `sum(Balance)` is executed before `T3` begins, and the second `sum(Balance)` is executed after `T3` has committed.
+    ]],
 
-  + During a system design review, an engineer suggests: "We can just use the `REPEATABLE READ` isolation level to solve all our concurrency problems in this audit process." Write a brief response evaluating this suggestion. Your response should consider whether this is sufficient, necessary, and practical for meeting the audit requirement.],
+    [During a system design review, an engineer suggests: "We can just use the `REPEATABLE READ` isolation level to solve all our concurrency problems in this audit process." Write a brief response evaluating this suggestion. Your response should consider whether this is sufficient, necessary, and practical for meeting the audit requirement.
+    
+    #sol[
+      While `REPEATABLE READ` is sufficient for meeting the audit requirement, it is an overkill and unnecessary. Using `REPEATABLE READ`, the audit process would always report the same balance during its run, defying its practical purpose to closely monitor the balance. The `READ COMMITTED` isolation level is more appropriate in this case.
+    ]])],
 
   [Consider the following observation from production logs:
 
   - `T5` (Data Maintenance): Inserts 100 new account records in a single transaction.
   - `T6` (Analytics Query): Runs `SELECT COUNT(*) FROM Account;` twice within its transaction and gets two different results. The team initially diagnosed this as a "phantom read."
 
-  + Under which isolation level(s) is this phenomenon possible?
+  #enum(
+    [Under which isolation level(s) is this phenomenon possible?
+    
+    #sol[
+      Phantom reads (as observed here) are possible under `READ UNCOMMITTED` and `READ COMMITTED` isolation levels.]],
 
-  + A DBA comments: "While this looks like a phantom read, the actual impact and the appropriate fix might be different if those 100 new accounts were all inserted with a zero balance." Briefly explain the DBA's reasoning. Why might the business impact and the technical solution be different if the new accounts have a zero balance, even though the phenomenon looks the same?],
+    [A DBA comments: "While this looks like a phantom read, the actual impact and the appropriate fix might be different if those 100 new accounts were all inserted with a zero balance." Briefly explain the DBA's reasoning. Why might the business impact and the technical solution be different if the new accounts have a zero balance, even though the phenomenon looks the same?
+    
+    #sol[
+      The DBA suggests that the observed phantom read may be harmless from a business point of view. For example, even though the phantom read occurs, if the 100 new accounts have zero balance, then other aggregate queries (like total balance) aren't affected, so the business impact may be minimal. 
+    
+      This means the solution need not be a costly increase in isolation level, and some inconsistencies may be tolerated. The focus shifts from preventing the phenomenon to assessing whether it matters for the specific analytics being run.]])],
 )
