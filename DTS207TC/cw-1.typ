@@ -3,7 +3,7 @@
 #show: assignment.with(
   title: [Assessment Task 1 (CW)],
   course: [DTS207TC: Database Development and Design],
-  university-logo: image("logo.png", width: 6cm),
+  university-logo: image("resource/logo.png", width: 6cm),
   figure-numbering: "1",
 )
 
@@ -14,14 +14,14 @@
 Create tables with suitable data types for students, courses, and course enrollments based on the data in the CSV files.
 
 #sol[See file `table_creation_11.sql`
-#raw(read("code/table_creation_11.sql"), lang: "sql", block:true)]
+#raw(read("cw-1/table_creation_11.sql"), lang: "sql", block:true)]
 
 == View Creation (5 marks):
 
 Create a view named `student_course_view` that includes the student's name, course name, grade, and GPA. The results should be sorted by the student's name in ascending order.
 
 #sol[See file `view_creation_12.sql`
-#raw(read("code/view_creation_12.sql"), lang: "sql", block: true)]
+#raw(read("cw-1/view_creation_12.sql"), lang: "sql", block: true)]
 
 == Query Execution (5 marks):
 
@@ -29,9 +29,8 @@ Execute a query to retrieve data from the `student_course_view` and provide a sc
 
 #sol[See @fig_13 for query result.
 #figure(
-  image("view_13.png"),
+  image("resource/view_13.png", height: 40%),
   caption: [Screenshot of view query result for question 1.3 using `psql` command line tool.],
-  placement: auto,
 ) <fig_13>]
 
 #set enum(numbering: "(a)")
@@ -42,23 +41,22 @@ Execute a query to retrieve data from the `student_course_view` and provide a sc
 
 #sol[See file `insert_or_update_student_2a.sql`. Note that when presented with a non-existent `class_id`, the procedure will give an error because of foreign key violation.
 
-#raw(read("code/insert_or_update_student_2a.sql"), lang: "sql", block: true)]
+#raw(read("cw-1/insert_or_update_student_2a.sql"), lang: "sql", block: true)]
 
 2. Create a trigger to automatically calculate and update the class average when a grade is inserted or updated in the grades table. The class average is stored in a new field called `average_score` in the class table. (8 marks)
 
 #sol[See file `trigger_2b.sql`. 
 
-#raw(read("code/trigger_2b.sql"), lang: "sql", block: true)]
+#raw(read("cw-1/trigger_2b.sql"), lang: "sql", block: true)]
 
 3. Test your program using the following statements and provide a screenshot of the results. (4 marks)
 
 #sol[See @fig_2c for query result.
 #figure(
-  image("2c.png"),
+  image("resource/2c.png"),
   caption: [Screenshot of query result for question 2.c using `psql` command line tool.],
   placement: none,
 ) <fig_2c>]
-
 
 = Complex Data Types
 
@@ -145,9 +143,8 @@ Execute a query to retrieve data from the `student_course_view` and provide a sc
 - `TranscriptEntry` association class: Though not directly mentioned in the question statement, it represents the relationship between a `Student` and a `Section`, recording the outcome (grade). Modeling it as a class allows us to store attributes like `grade`, `semester`, and `year` directly on the relationship.
 
 #figure(
-  image("uml_4a.svg", width: 90%),
+  image("resource/uml_4a.svg", width: 90%),
   caption: [UML class diagram for a university database (Question 4.b)],
-  placement: auto,
 ) <fig_4a>]
 
 2. Translate the UML class diagram created in the above question (a) into a relational schema. In the relational schema, only use relation name and attribute, e.g., student (name, number, SSN,..etc.) and specify foreign key as fk. (10 marks)
@@ -202,7 +199,7 @@ Generally speaking, both the star and snowflake schema can be more empirically u
 
 #sol[See @fig_5b for the snowflake schema diagram. Primary keys are in boldface. Foreign key references are indicated by links between entities.
 #figure(
-  image("diagram_5b.png", width: 90%),
+  image("resource/diagram_5b.png", width: 90%),
   caption: [Snowflake model for vehicle data warehouse.],
   placement: none,
 ) <fig_5b>]
@@ -228,5 +225,4 @@ Now for the actual algorithm to build `location_route`. One thing worth noting i
 
 - Use recursive CTE to generate all possible routes from one location to another, and select the fastest one given the current average speed on each street. If this approach is still too slow for very large data sets, then:
 
-- Use an off-line program or procedural language function (e.g. Python) to do the update.
-]
+- Use an off-line program or procedural language function (e.g. Python) to do the update.]

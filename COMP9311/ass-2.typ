@@ -3,7 +3,7 @@
 #show: assignment.with(
   title: [Assignment 2],
   course: [COMP9311/25T3 Introduction to Database Systems],
-  university-logo: image("unsw.png", width: 3.5cm),
+  university-logo: image("resource/unsw.png", width: 3.5cm),
   authors: (
     (
       name: "John Doe",
