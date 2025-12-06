@@ -3,11 +3,11 @@
 #show: assignment.with(
   title: [Assessment Task 2 (CW)],
   course: [DTS207TC: Database Development and Design],
-  university-logo: image("logo.png", width: 6cm),
+  university-logo: image("resource/logo.png", width: 6cm),
   figure-numbering: none,
-  enum-numbering: "(a.i)",
+  enum-numbering: "(a.i.1)",
   heading-numbering: none,
-  watermark: false,
+//  watermark: true,
 )
 
 #set enum(tight: false)
@@ -16,9 +16,9 @@
 
 In a database storage system, the cache hit rate has a significant impact on its performance. Different cache strategies will result in different cache hit ratios. Now, we have recorded 2 datasets (please download from LMO), containing CPU access requests to memory for a period of time. They both have 10,000 items from addresses 0 to 63. We will simulate the process of the CPU reading and caching data from the memory through a program in the table below (also can be download from LMO). Please run the program to compare the hit rates of different strategies:
 
+
 #zebraw(
   numbering: false,
-  numbering-separator: true,
   background-color: silver.transparentize(80%),
   highlight-color: silver.transparentize(20%),
   ```
@@ -28,7 +28,7 @@ In a database storage system, the cache hit rate has a significant impact on its
 
 You need to analyze the characteristics of this data and analyze why the hit rates of the two strategies are different on the two data sets. Design and implement a strategy which can achieve better results than the `RandomPolicy` strategy on the `trace2` data set. Record the hit rates you observed in the table below (with snapshot).
 
-#align(center, table(
+#figure(table(
   columns: 3,
   stroke: 0.5pt,
   align: center,
@@ -45,7 +45,6 @@ You need to analyze the characteristics of this data and analyze why the hit rat
 
   #zebraw(
     numbering: false,
-    numbering-separator: true,
     background-color: silver.transparentize(80%),
     highlight-color: silver.transparentize(20%),
     ```terminal
@@ -78,8 +77,8 @@ You need to analyze the characteristics of this data and analyze why the hit rat
     grid(
       columns: 1,
       gutter: 1em,
-      image("trace1-100.png"),
-      image("trace2-100.png"),
+      image("resource/trace1-100.png"),
+      image("resource/trace2-100.png"),
     ),
     caption: [Cache access patterns of the first 100 items. Above: `trace1.txt`, below: `trace2.txt`],
   )
@@ -87,7 +86,7 @@ You need to analyze the characteristics of this data and analyze why the hit rat
   Now to beat `RandomPolicy` using `trace2.txt`, note that although the overall pattern appears random, the frequency of each item is not exactly the same. For example, the most frequent item (27) appears 188 times, while the least frequent item (31) appears 135 times. Our `custom` policy can leverage this knowledge to gain an upper hand over `RandomPolicy`, which does not distinguish any particular item from another.
 
   #figure(
-    image("trace2-hist.png"),
+    image("resource/trace2-hist.png"),
     caption: [Frequency distribution of the items in `trace2.txt`],
   )
 
@@ -108,7 +107,6 @@ You need to analyze the characteristics of this data and analyze why the hit rat
 
   #zebraw(
     numbering: false,
-    numbering-separator: true,
     background-color: silver.transparentize(80%),
     highlight-color: silver.transparentize(20%),
     ```terminal
@@ -151,9 +149,14 @@ Consider a hard disk with a sector size of $B$ = 512 bytes. A `CUSTOMER` file co
 
     While the binary search method is efficient for single lookups, it is not optimal for range queries such as
 
-    ```sql
-    select * from CUSTOMER where Ssn between 123 and  456
-    ```
+    #zebraw(
+      numbering: false,
+      background-color: silver.transparentize(80%),
+      highlight-color: silver.transparentize(20%),
+      ```sql
+      select * from CUSTOMER where Ssn between 123 and  456
+      ```
+    )
 
     #set enum(numbering: "1.")
     If the system repeatedly uses binary search for each individual `Ssn` in the range, performance would suffer because of:
@@ -199,7 +202,7 @@ Consider a hard disk with a sector size of $B$ = 512 bytes. A `CUSTOMER` file co
 
     Height of the B$""^+$-tree may fluctuate because  frequent insertions and deletions cause node   splits and merges that propagate to the root. When  many nodes sit near 50% full, a small number of  deletions can trigger cascading merges, possibly   collapsing a level. Likewise, a burst of inserts  can cause cascading splits, adding a level.
 
-    One strategy to stabilize the tree height is  delaying spits and merges (ideas from the  B$""^*$-tree):
+    One strategy to stabilize the tree height is  delaying splits and merges (ideas from the  B$""^*$-tree):
 
     - On overflows, instead of splitting immediately,   try to push excess keys to a sibling.
     - On underflows, try to borrow from siblings first.
@@ -211,7 +214,7 @@ Consider a hard disk with a sector size of $B$ = 512 bytes. A `CUSTOMER` file co
 
 Consider a database with a relation `Account(AccountID, Balance)` and initial state:
 
-#align(center, table(
+#figure(table(
   columns: 2,
   stroke: 0.5pt,
   table.header[AccountID][Balance],
@@ -222,23 +225,33 @@ Consider a database with a relation `Account(AccountID, Balance)` and initial st
 #enum(
   [The following transactions represent a fund transfer (`T1`) and a real-time balance report (`T2`) that run concurrently.
 
-  #table(
+  #figure(table(
     columns: (1fr, 1fr),
     stroke: .5pt,
     align: center,
-      table.header[`T1` (Transfer)][`T2` (Report)],
-      [```sql
+    table.header[`T1` (Transfer)][`T2` (Report)],
+    zebraw(
+      lang: false,
+      numbering-separator: true,
+      background-color: silver.transparentize(80%),
+      highlight-color: silver.transparentize(20%),
+      ```sql
       begin transaction
       update Account set Balance = Balance - 100 where AccountID = 1;
       update Account set Balance = Balance + 100 where AccountID = 2;
       commit;
-      ```],
-      [```sql
+      ```),
+    zebraw(
+      lang: false,
+      numbering-separator: true,
+      background-color: silver.transparentize(80%),
+      highlight-color: silver.transparentize(20%),
+      ```sql
       begin transaction
       select sum(Balance) from Account;
       commit;
-      ```],
-  )
+      ```),
+  ))
 
   The application requirement states that the report must never reflect a financially inconsistent state. However, under certain database configurations, `T2` might output a total of 20 (instead of the correct 120).
 
@@ -254,28 +267,40 @@ Consider a database with a relation `Account(AccountID, Balance)` and initial st
     
     #sol[
       - Advantage: guarantees freedom from the observed anomaly.
-      - Potential drawback: reduced performance due to waiting.]],
+      - Potential drawback: 
+        1. reduced performance due to waiting.
+        2. increased system complexity and maintenance burden. For example, applications must be designed to handle transaction rollbacks gracefully due to perceived conflicts.]],
   )],
 
   [Now consider these transactions: a process adding a new account (`T3`), and an audit process calculating the total balance (`T4`).
 
-  #table(
+  #figure(table(
     columns: (1fr, 1fr),
     stroke: .5pt,
     align: center,
     table.header[`T3` (New Account)][`T4` (Audit)],
-    [```sql
-    begin transaction
-    insert into Account values (3, 150);
-    commit;
-    ```],
-    [```sql
-    begin transaction
-    select sum(Balance) from Account;
-    select sum(Balance) from Account;
-    commit;
-    ```],
-  )
+    zebraw(
+      lang: false,
+      numbering-separator: true,
+      background-color: silver.transparentize(80%),
+      highlight-color: silver.transparentize(20%),
+      ```sql
+      begin transaction
+      insert into Account values (3, 150);
+      commit;
+      ```),
+    zebraw(
+      lang: false,
+      numbering-separator: true,
+      background-color: silver.transparentize(80%),
+      highlight-color: silver.transparentize(20%),
+      ```sql
+      begin transaction
+      select sum(Balance) from Account;
+      select sum(Balance) from Account;
+      commit;
+      ```),
+  ))
 
   Suppose the application requirement for the audit is that it must have a consistent view of the database throughout its execution.
 

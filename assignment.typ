@@ -1,4 +1,4 @@
-#import "@preview/zebraw:0.6.0": zebraw
+#import "@preview/zebraw:0.6.1": zebraw
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
 #let assignment(
@@ -9,7 +9,6 @@
   figure-numbering: none,
   heading-numbering: "1.",
   enum-numbering: "1)",
-  raw-numbering: true,
   watermark: false,
   text-size: 11pt,
   body,
@@ -50,13 +49,6 @@
 
   set heading(numbering: heading-numbering)
   show heading: set block(below: 10pt)
-
-  show: zebraw.with(
-    numbering: raw-numbering,
-    numbering-separator: true,
-    background-color: silver.transparentize(80%),
-    highlight-color: silver.transparentize(20%),
-  )
   
   grid(
     columns: (auto, 1fr),
@@ -88,9 +80,15 @@
   set figure(numbering: figure-numbering)
   show figure: align.with(center)
   show figure.caption: pad.with(x: 10%)
-  show figure: set text(9pt, 
+  show figure.caption: set text(9pt, 
     style: "italic", 
     weight: "regular"
+  )
+  
+  show raw: zebraw.with(
+    numbering-separator: true,
+    background-color: silver.transparentize(80%),
+    highlight-color: silver.transparentize(20%),
   )
 
   body
